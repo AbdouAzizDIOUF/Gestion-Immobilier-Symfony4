@@ -1,0 +1,21 @@
+-> php bin/console doctrine:database:create  // creeation de la base de donnees
+
+
+// toutes les commandes commencant par make permet de generer du codes
+
+-> php bin/console make:entity // permet de creer une entity
+
+-> php bin/console make:migration // genere le fichier de migration
+
+-> php bin/console make:entity nomDeLaTable // permet de rajouter des champs
+
+// pour revenir en arriere apres modifiction des entities
+->php bin/console doctrine:migrations:status // donne les inf sur la migration
+
+->php bin/console doctrine:migrations:migrate + num_version_anterieur // effectue une migration vers cette version "supprime la migration indiquee"
+
+-> php bin/console doctrine:migrations
+-> php bin/console make:migration
+-> php bin/console doctrine:migrations:migrate
+
+->  php bin/console cache:clear

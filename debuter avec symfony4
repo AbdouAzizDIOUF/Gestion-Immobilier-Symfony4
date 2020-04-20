@@ -1,0 +1,180 @@
+//GIT
+
+git config --global user.abdouazizdiouf75@gmail.com "abdouazizdiouf75@gmail.com"
+
+git config --global user.ziza "Votre nom"
+
+
+Package:
+
+        -> toutes les bundles supportees par symfony se trouve sur le site "flex.symfony.com"
+            -il ya deux categories de bundles: ceux valides par symfony denomme "officiel" et ceux par les contributteurs "contrib"
+
+        -> composer require cocur/slugify: traduction d'une chaine de carractere en expression reguliere
+
+        -> composer require fzaninotto/faker": "1.8" // l'insertion des donnees fournies par le bibliotheque
+
+        -> composer require knplabs/knp-paginator-bundle // gere la pagination
+
+        -> composer require vich/uploader-bundle : upload de fichier en le liant en une entity
+
+        -> composer require liip/imagine-bundle : redimensionnement de la taille de l'image
+
+
+
+ CONSOLE
+
+        ->php bin/console : liste l'ensemble des commande disponible de symfony
+
+        -> php bin/console server:run fait la meme chose que le php -S localhost:8000 -t public/ les deux permettent tout simplement de lancer le server local
+
+        -> php bin/console: debug:container permet d'afficher l'ensemble des services de notre application
+
+        -> php bin/console: debug:autowiring permet de lister l'ensemble des classe qui peut etre charge automatiquement
+
+        -> php bin/console doctrine:database:create  // creeation de la base de donnees
+
+
+
+  // toutes les commandes commencant par make permet de generer du codes
+
+    -> php bin/console make:entity // permet de creer une entity (Une table)
+
+    -> php bin/console make:migration // genere le fichier de migration
+
+    -> php bin/console make:entity nomDeLaTable // permet de rajouter des champs dans un table deja creer
+
+
+
+    // CRUD des biens immobiliers
+
+-> php bin/console make:form //creation de formulaire NB:le nom de la formulaire doit tjr terminer par Type (ex: nomEntityType)
+
+		ajout dans le dossier "Twig.yaml"  {+ form_themes:    ['bootstrap_4_layout.html.twig'] } permet de preciser le theme a utiliser
+
+		tous les themes disponibles se trouve dans le dossier {vendor/symfony/Twig-bridge/Ressources/Views/Form}
+
+		Pour changer ou de preciser le Label des champs de text nous n'avons differents solutions:
+	 		1-) -> le preciser dans la methode add('default_label', null, ["default_label" => "new_label"]) ex: ->add('city', null, ['label'=> 'Ville'])
+
+	 		2-) l'utilisation du systeme de traduction 
+	 			=> on ajoute au sein de la methode configureOptions(...., ...) {'translation_domain' => 'forms'}
+	 			=> on cree un fichier forms.fr.yaml dans le dossier "translations/forms.fr.yaml" {puis en precisant la traduction ex: City: Ville}
+
+	 			le mode de tralation du fichier de configuration de "translation.yaml" est de type "locale" par defaut
+
+	 		3-) on modifie le fichier service.yaml en precisant locale: 'fr'
+
+
+
+        // Validation des  donnees
+
+        Il existe plusieurs methodes de validations: l'utilisation des annotations, du XML ou du YAML
+
+            Validation avec des annotations:
+
+                use Symfony\Component\Validator\Constraints AS Assert; // permet la validation du niveau formulaire
+                        NB: n'hesiter pas consulter la doc de symfony "https://symfony.com/doc/current/validation.html"
+
+                use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity; // permet de controler l'unicite des donnees au niveau database
+
+                        NB: plus d'info "https://symfony.com/doc/current/reference/constraints/UniqueEntity.html"
+
+
+
+        // le composant security
+
+       La configuration de ce modul se trouve dans "config/packages/security.yaml"
+
+       Cette fichiers presente trois cles qui sont:
+
+            -> providers : permet de preciser cmnt on va recuperer les utilisateurs et comment on va recuperer les authentifications
+
+            -> firewalls: va permettre de definir des composants pour l'authentification
+
+            -> access_control: indique le niveau d'acce a notre application
+
+
+       -> php bin/console make:entity User // creer la table user
+
+       -> php bin/console make:migration
+
+       -> php bin/console doctrine:migration:migrate
+
+       -> php bin/console config:dump-reference security // permet le debugage du composant security
+
+       -> php bin/console make:fixtures //permet de remlir notre base de donnees
+
+
+
+        // Paginner les biens
+
+        ->php bin/console make:fixture // creation d'une fixture  "PropertyFixture"
+
+        -> php bin/console doctrine:fixtures:load
+
+        -> on creer knp_paginator.yml puis on modifie le template par defaut en mettant "twitter_bootstrap_v4_pagination.html.twig" pour avoir une meilleur vue.
+        -> on creer un nouvaeu fichier "KnpPaginatorBundle.fr.yaml" pour gerrer la traduction "suivant et precedent"
+
+
+
+        // Filtrer les biens
+
+            -> creer une entity PropertyChearche: representant la recherche au niveau de la bd NB: a ne pas creer en ligne de commande
+            -> php bin/console make:form
+            -> PrpertySearcheType // creation de formulaire denomme PropertySearcheType
+
+            l'ajout d'un button de soumission se fait via
+            ->add('submit', SubmitType::class,[
+                   'label'=> 'Rechercher'
+            ])
+
+
+
+        // GESTION DES OPTIONS VIDEOS 9
+
+         -> php bin/console make:crud + nom de l'entity // ex : make:crud Optione // genere automatiquement le CRUD de l'entity donnee
+
+            - L'ajout de l'options dans la l'entity Property, procedure:
+                    ->klk ligne de code ajoute dans le fichier "PropertyType"
+
+
+    // Image A LA UNE VIDEO 10
+
+      - Apres l'instalation de vich/uploader une nouveau fichier est automatiquement creer "vich_uploader.yaml"
+
+      - sur le fichier: on indique "mappings" et on indique ou doit se positionner l'image et comment sa doit etre nomme dans le fichier "vich_uploader.yaml"
+
+      - on ajoute la propriete du fichier dans l'entity correspondans en indiquant le mappings via l'anotation
+
+       NB: par defaut symfony ne detecte pas le changement, il faudra le faire comprendre l'ensemble des pb recontrer par le bundle se trouve dans le fichier "unknow_issues.md"
+
+      - on utilise les namer pour nommer nos fichier uploader ex: dans notre cas nous preferons "Vich\UploaderBundle\Naming\UniqIdNamer"
+      - /images/properties/{{ property.fileName }} // on utilise un autre moyen pour indiquer automatiquement le chemin de l'image
+        en utilisant " {{ vich_uploader_asset(property, 'imageFile') }} ""
+
+
+      - Apres l'installation du bundle liip/imagine-bundle, un fichier de configuration du bundle est automatiquement generer "liip_imagine.yaml"
+
+      - minute 20 important pour klk notions sur le cache directement dans le controller
+
+      - creation du fichier listener/ImageCacheSubscriber.php // gestion des evennements
+
+      - l'ajout du tags dans le fichier "services.yaml"
+
+
+     // Gestion des contacts video 11
+
+
+       - l'envoie de mail
+            - modifier l'url MAILER_URL du fichier .env "smtp://localhost:1025": permet de sumuler l'envoie de mail en local
+
+
+    // Video 12
+
+    -installation de webpack-encore:
+        -> composer require symfony/webpack-encore-bundle
+    - installation de yarn
+        -> yarn
+       - Quelques commandes pour l'utilisation de yarn
+            -> npm run dev-server: permet de lancer le server de dev locale

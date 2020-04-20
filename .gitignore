@@ -1,1 +1,4 @@
 .idea
+lsp
+composer.lock
+package-lock.json

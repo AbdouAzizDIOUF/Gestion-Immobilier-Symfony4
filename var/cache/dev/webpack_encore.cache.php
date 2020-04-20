@@ -11,13 +11,13 @@ return [
     array (
       'js' => 
       array (
-        0 => 'http://localhost:8080/build/runtime.js',
-        1 => 'http://localhost:8080/build/vendors~app.js',
-        2 => 'http://localhost:8080/build/app.js',
+        0 => '/build/runtime.e9dea5e6.js',
+        1 => '/build/0.fda6fef0.js',
+        2 => '/build/app.64bc9805.js',
       ),
       'css' => 
       array (
-        0 => 'http://localhost:8080/build/app.css',
+        0 => '/build/app.99c21d8d.css',
       ),
     ),
   ),
